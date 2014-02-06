@@ -34,11 +34,8 @@ class StringGenerator(object):
         for i in range(0, len(self.objects)):
             if time.time() - self.timestamps[i] > self.objects[i]["Timing"]:
                 self.timestamps[i] = time.time()
-                self.information_cache[i] = self.objects[i]["Function"]
-                (self.objects[i]["Parameters"])
-            returnString = returnString.replace("$%s$" % self.objects[i]
-                                                ["Identifier"],
-                                                self.information_cache[i])
+                self.information_cache[i] = self.objects[i]["Function"](self.objects[i]["Parameters"])
+            returnString = returnString.replace("$%s$" % self.objects[i]["Identifier"],self.information_cache[i])
             continue
         return returnString
 
@@ -80,27 +77,30 @@ def used_memory_percentage(parameterDict):
     return "%0.2f" % ((used_ram/total_ram)*100) + " %"
 
 
-# this doesn't really work yet, because cpu-usages are returned as a list
 def cpu_usage(parameterDict):
     cpu = psutil.cpu_times_percent(interval=0, percpu=True)
-    returnValue = []
+    returnValue = ""
     for x in range(0, len(cpu)):
-        returnValue.append("%0.2f" % (100-cpu[x][3]) + " %")
+        returnValue += "CPU" + str(x + 1) + ":"
+        returnValue += ("%6.02f" % (100-cpu[x][3]) + "% ")
     return returnValue
 
 # some testing definitions (these will not be needed once configuration-file
 # support is implemented
 my_command_parameters = {"commandName": "uname", "argsList": ["-a"]}
 my_command = {"Object": "externalCommand", "Identifier": "externalCommand1",
-              "Timing": 3, "Function": externalCommand,
+              "Timing": 300, "Function": externalCommand,
               "Parameters": my_command_parameters}
 my_clock_parameters = {"Format": "%H:%M:%S"}
-my_clock = {"Object": "clock", "Timing": 2, "Identifier": "clock",
+my_clock = {"Object": "clock", "Timing": 1, "Identifier": "clock",
             "Function": formatedClock, "Parameters": my_clock_parameters}
-my_freeram = {"Object": "free_ram", "Timing": 1, "Identifier": "free_ram",
+my_freeram = {"Object": "free_ram", "Timing": 3, "Identifier": "free_ram",
               "Function": free_memory, "Parameters": []}
-my_objects = [my_clock, my_freeram, my_command]
-my_layout = "$clock$ | Free RAM: $free_ram$ MB | Kernel: $externalCommand1$"
+my_cpu = {"Object": "cpu", "Timing": 1, "Identifier": "cpu",
+          "Function": cpu_usage, "Parameters": []}
+my_objects = [my_clock, my_freeram, my_command, my_cpu]
+
+my_layout = "$clock$ | Free RAM: $free_ram$ MB | Kernel: $externalCommand1$ | $cpu$"
 
 # the general running logic - just a stub right now
 # exception handling needs to be implemented
