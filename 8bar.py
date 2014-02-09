@@ -35,7 +35,7 @@ class StringGenerator(object):
             if time.time() - self.timestamps[i] > self.objects[i]["Timing"]:
                 self.timestamps[i] = time.time()
                 self.information_cache[i] = self.objects[i]["Function"](self.objects[i]["Parameters"])
-            returnString = returnString.replace("$%s$" % self.objects[i]["Identifier"],self.information_cache[i])
+            returnString = returnString.replace("$%s$" % self.objects[i]["Identifier"], self.information_cache[i])
             continue
         return returnString
 
@@ -54,27 +54,27 @@ def externalCommand(parameterDict):
 def free_memory(parameterDict):
     ram = psutil.phymem_usage()
     free_ram = ram.free/(1024*1024)
-    return "%0.2f" % free_ram
+    return "%7.2f" % free_ram
 
 
 def total_memory(parameterDict):
     ram = psutil.phymem_usage()
     total_ram = ram.total/(1024*1024)
-    return "%0.2f" % total_ram
+    return "%7.2f" % total_ram
 
 
 def free_memory_percentage(parameterDict):
     ram = psutil.phymem_usage()
     free_ram = ram.free/(1024*1024)
     total_ram = ram.total/(1024*1024)
-    return "%0.2f" % ((free_ram/total_ram)*100) + " %"
+    return "%6.2f" % ((free_ram/total_ram)*100) + " %"
 
 
 def used_memory_percentage(parameterDict):
     ram = psutil.phymem_usage()
     used_ram = ram.used/(1024*1024)
     total_ram = ram.total/(1024*1024)
-    return "%0.2f" % ((used_ram/total_ram)*100) + " %"
+    return "%6.2f" % ((used_ram/total_ram)*100) + " %"
 
 
 def cpu_usage(parameterDict):
